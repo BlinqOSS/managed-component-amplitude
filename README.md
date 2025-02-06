@@ -1,4 +1,14 @@
-# Amplitude Managed Component
+# Blinq Fork of Amplitude Managed Component
+
+This is a fork of [Amplitude Managed Component](https://github.com/managed-components/amplitude)
+
+TL;DR - You now will have full control of the entire Amplitude payload. Whereas, previously you didn't.
+
+The main changes we've made here are:
+
+1. The ability to edit/override the top level fields. The main problem Blinq was facing was that the original repo would automatically set the device properties to the userAgent on the client. Which, for our use case we didn't want. Additionally we had no control over this. This fork fixes these problems.
+2. Better prefix structure for sending user_properties/event_properties/groups. This fixes some of the bugs from the original repo. For example in the original repo: Sending a value to `user_id` in Zaraz would result in both the `user_id` property and `user_properties.id` to be set. This is NOT desired.
+3. All the device properties are not getting set for you. We have found this redundant as you could simply set these yourself in Zaraz. This allows you to have more control over the payload and your analytics.
 
 ## Supported Event Types
 
@@ -42,15 +52,15 @@ Amplitude distinguishes between Event Properties, User Properties, and Group Pro
 
 ##### Event Properties `object` _optional_
 
-`event_properties` All Properties are by default sent as `event_properties`. This is true with the exception of properties that begin with `user_` or `groups_` prefixes.
+`event_properties` To send `event_properties`, name your fields/event parameters with the prefix `"event_properties."`. For example, in WebCM: `webcm.track('event', {name: 'signup', event_properties.device: 'iphone'})`. The following code should end up adding `device` to `event_properties`. It will omit the prefix from the property name, so it will send `device` as the key and `iphone` as the value.
 
 ##### User Properties `object` _optional_
 
-`user_properties` To send `user_properties`, name your fields/event parameters with the prefix `"user_"`. For example, in WebCM: `webcm.track('event', { name: 'signup', user_name: 'My Name' })`. Since in WebCM, all event properties are automatically directed to the tool without the need for mapping configuration, the following code should add `user_name` to `user_properties`. It will omit the prefix from the property name, so it will send `name` as the key and `My Name` as the value.
+`user_properties` To send `user_properties`, name your fields/event parameters with the prefix `"user_properties."`. For example, in WebCM: `webcm.track('event', { name: 'signup', user_properties.name: 'My Name' })`. The following code should add `name` to `user_properties`. It will omit the prefix from the property name, so it will send `name` as the key and `My Name` as the value.
 
 ##### Groups `object` _optional_
 
-`groups` To send the `groups` property, name your fields/event parameters with the prefix `“groups_”`. For example, in WebCM: `webcm.track('event', {name: 'signup', groups_company: 'My Company Name'})`. Since in WebCM all of the event properties are automatically directed to the tool (without the need for mapping configuration), the following code should end up adding `groups_company` to `groups`. It will omit the prefix from the property name, so it will send `company` as the key and `My Company` as the value.
+`groups` To send the `groups` property, name your fields/event parameters with the prefix `“groups.”`. For example, in WebCM: `webcm.track('event', {name: 'signup', groups.company: 'My Company Name'})`. The following code should end up adding `company` to `groups`. It will omit the prefix from the property name, so it will send `company` as the key and `My Company` as the value.
 
 ##### User ID `string` _optional_
 
